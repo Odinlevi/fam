@@ -33,18 +33,29 @@ for i, string in enumerate(new_text2.split('\n')):
         checker2 += 1
         if len(new_text2.split('\n')) > i+1:
             if new_text2.split('\n')[i+1][:new_text2.split('\n')[i+1].find('.')] != string[:string.find('.')]:
-                new_text += '  ' + string + '\n\n'
+                new_text += '  ' + string + '\n'
             elif len(new_text2.split('\n')[i+1]) < len(string):
-                new_text += '  ' + string + '\n\n'
+                new_text += '  ' + string + '\n'
             else:
                 continue
         else:
-            new_text += '  ' + string + '\n\n'
+            new_text += '  ' + string + '\n'
 
-'''new_text2 = ''
+new_text2 = ''
+checker = 0
+skip = False
 
 for i, string in enumerate(new_text.split('\n')):
-    if string.find('''
+    if skip == True:
+        skip = False
+        continue
+    if i > 0 and len(new_text.split('\n')) > i + 1:
+        changed_string0 = string.upper().replace('ИНТРО', 'INTRO').replace('интро', 'INTRO')
+        changed_string1 = new_text.split('\n')[i+1].upper().replace('БЕТА', 'BETA').replace('бета', 'BETA')
+        if changed_string0.find('INTRO') != changed_string0.rfind('INTRO') and changed_string1.find('BETA') != changed_string1.rfind('BETA'):
+            string = string + ' ' + new_text.split('\n')[i+1][changed_string1.rfind('BETA') + 4:]
+            skip = True
+    new_text2 += string + '\n\n'
 
 with open('orh_out.txt', 'w', encoding='utf-8') as out_file:
-    out_file.write(new_text)
+    out_file.write(new_text2)
