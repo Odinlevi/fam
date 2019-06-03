@@ -6,11 +6,11 @@ inp_strings = inp_text.split('\n')
 checker1 = 0
 checker2 = 0
 new_text = ''
+
 for string in inp_strings:
-    '''if string.find('ВЫПУСК «Stiri Orhei TV') != -1 and checker1 == 0:
-        checker1 += 1
-        continue'''
-    string = string.replace(inp_strings[0], '')
+
+    string = string.replace(inp_strings[0].replace('﻿', ''), '')
+
     if string.find('GENERIC OUT') != -1:
         break
     if string.find('Длительность планируемая:') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Дата планируемого эфира:') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
