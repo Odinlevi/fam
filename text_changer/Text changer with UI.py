@@ -11,6 +11,8 @@ class Ui_Form(object):
         self.path = ''
         self.label = QtWidgets.QLabel(Form)
         self.label.setText("Choose a file path:")
+        self.label2 = QtWidgets.QLabel(Form)
+        self.label2.setGeometry(QtCore.QRect(348, 65, 300, 50))
         self.label.setGeometry(QtCore.QRect(10, 0, 300, 50))
         self.lineEdit = QtWidgets.QLineEdit(Form)
         self.lineEdit.setGeometry(QtCore.QRect(10, 38, 280, 20))
@@ -66,8 +68,9 @@ class Ui_Form(object):
         for string in inp_strings:
 
             string = string.replace(inp_strings[0].replace('﻿', ''), '')
-
-            if string.find('GENERIC OUT') != -1:
+            string = string.replace('OFF', '')
+            string = string.replace('SINCRON', '')
+            if string.upper().find('GENERIC OUT') != -1:
                 break
             if string.find('Длительность планируемая:') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Дата планируемого эфира:') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
                 continue
@@ -117,6 +120,8 @@ class Ui_Form(object):
         with open('orh_out.txt', 'w', encoding='utf-8') as out_file:
             out_file.write(new_text2)
 
+        self.label2.setText("Ok!")
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
