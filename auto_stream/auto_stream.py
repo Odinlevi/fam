@@ -117,7 +117,11 @@ def stream_stop(stream_id, api_key, access_token):
 
 
 def find_last_start_db(channel_kind):
-    with pymssql.connect('localhost', 'sa', '12345678', "AutoPlay7") as conn:
+    ip = 'localhost'
+    login = 'sa'
+    password = '12345678'
+    bd = "AutoPlay7"
+    with pymssql.connect(ip, login, password, bd) as conn:
         with conn.cursor(as_dict=True) as cursor:
             cursor.execute("SELECT EventTime FROM dbo.AzSrvLogUsersInfo \
              where EventName LIKE '"+channel_kind+"' ORDER BY 'EventTime'")
