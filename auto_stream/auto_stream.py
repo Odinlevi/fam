@@ -187,7 +187,7 @@ if __name__ == "__main__":
                 client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
                 api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
                 refresh_token = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
-                main(cl_id, cl_sec, api_key, ref_tn, arr_timing.split('/')[1], time_now)
+                main(client_id, client_secret, api_key, refresh_token, arr_timing.split('/')[1], time_now)
         else:
             sleep(1)
 
@@ -201,12 +201,12 @@ if __name__ == "__main__":
                 ref_tn = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
                 main(cl_id, cl_sec, api_key, ref_tn, arr_timing.split('/')[1], time_now)
         elif
-    #Channel №2 (Central)
+    #Channel №2 (Orhei, old)
     client_id = '1001120855788-f4rbg0co31kt2lmalqic5t1ha6mp1k68.apps.googleusercontent.com'
     client_secret = '2xNqKdU_721IJg2ESb1wyQL6'
     refresh_token = '1/znQ4t6WBLealXD8FJXvWZF7jk0O6WP7pfMYYomaz6F17phpq70cWKFZnh8vYTiEF'
     api_key = 'AIzaSyCSt6stGMmadEV9qvI903HOcb6vWJO_nLo'
-    #Channel №1 (Orhei, old)
+    #Channel №1 (Central)
     client_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
     client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
     api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
