@@ -183,10 +183,10 @@ if __name__ == "__main__":
 
         for arr_timing in arr_timings:
             if time_after_minute in arr_timing.split('/')[0]:
-                cl_id = '1001120855788-f4rbg0co31kt2lmalqic5t1ha6mp1k68.apps.googleusercontent.com'
-                cl_sec = '2xNqKdU_721IJg2ESb1wyQL6'
-                ref_tn = '1/znQ4t6WBLealXD8FJXvWZF7jk0O6WP7pfMYYomaz6F17phpq70cWKFZnh8vYTiEF'
-                api_key = 'AIzaSyCSt6stGMmadEV9qvI903HOcb6vWJO_nLo'
+                client_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
+                client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
+                api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
+                refresh_token = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
                 main(cl_id, cl_sec, api_key, ref_tn, arr_timing.split('/')[1], time_now)
         else:
             sleep(1)
