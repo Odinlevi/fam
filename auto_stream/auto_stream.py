@@ -187,10 +187,11 @@ if __name__ == "__main__":
 
         for arr_timing in arr_timings:
             if time_after_minute in arr_timing.split('/')[0]:
-                client_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
-                client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
-                api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
-                refresh_token = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
+                client_id = '845737751068-3bh3fjlb4pjiuce318ka4jmtgb7oo95e.apps.googleusercontent.com'
+                client_secret = 'lUDNJ5mdFm4BExC-p3dDqr96'
+                api_key = 'AIzaSyCzzBreJ9oTGsdsHqWQIOxFF6kIMMyPsVI'
+                refresh_token = '1/e7Mli3kC1J6GjdeKR1ieycI5bW16b11X4ciOIRXi00A'
+
                 main(client_id, client_secret, api_key, refresh_token, arr_timing.split('/')[1], time_now)
         else:
             sleep(1)
@@ -210,11 +211,16 @@ if __name__ == "__main__":
     client_secret = '2xNqKdU_721IJg2ESb1wyQL6'
     refresh_token = '1/znQ4t6WBLealXD8FJXvWZF7jk0O6WP7pfMYYomaz6F17phpq70cWKFZnh8vYTiEF'
     api_key = 'AIzaSyCSt6stGMmadEV9qvI903HOcb6vWJO_nLo'
-    #Channel №1 (Central)
+    #Channel №1 (Orhei TV)
     client_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
     client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
     api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
     refresh_token = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
+    #Channel №3 (Central TV)
+    client_id = '845737751068-3bh3fjlb4pjiuce318ka4jmtgb7oo95e.apps.googleusercontent.com'
+    client_secret = 'lUDNJ5mdFm4BExC-p3dDqr96'
+    api_key = 'AIzaSyCzzBreJ9oTGsdsHqWQIOxFF6kIMMyPsVI'
+    refresh_token = '1/e7Mli3kC1J6GjdeKR1ieycI5bW16b11X4ciOIRXi00A'
     
 
         '''
