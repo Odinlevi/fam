@@ -1,8 +1,8 @@
-# import os
-from time import sleep  # strftime
+from time import sleep
 import requests
 import datetime
 import pymssql
+import passwords_file
 
 
 def get_access_token(client_id, client_secret, refresh_token):
@@ -53,6 +53,7 @@ def get_streams_with_certain_statuses(api_key, access_token, statuses):
                 streams_data[i] = {'title': item['snippet']['title'], 'id': item['id']}
     else:
         return None
+    print(streams_data)
     return streams_data
 
 
@@ -83,7 +84,7 @@ def stream_start(stream_id, api_key, access_token):
         print('Stream started! id = {}'.format(stream_id))
     else:
         print(requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
-                            params=params2), 'Changed to "Testing"')
+                            params=params2), 'Changing ID {} to "Testing"'.format(stream_id))
         sleep(18)
         response = requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
                                  params=params)
@@ -130,50 +131,47 @@ def find_last_start_db(channel_kind):
             return last_event_time
 
 
-def main(client_id, client_secret, api_key, refresh_token, channel_kind, lower_time_bracket):
+def main(client_id, client_secret, api_key, refresh_token, channel_and_time, lower_time_bracket):
     """its kinda documentary but I havent done it yet"""
-
-    # Local Test
-    '''
-    client_id = '100199210836-jmgudguooe326e9iuka6c8hpj0cepv9e.apps.googleusercontent.com'
-    client_secret = 'kQiWx0xORJLs0GtkJ_zhPOVD'
-    refresh_token= '1/iKJd-5za3FVVOpu2NnnnRgt3DmVXSC9CXaO4MOUgAoY'
-    api_key = 'AIzaSyDOfnp3ZnMb7WiIlG3OjY0rrq71PF4wZKs'
-    '''
 
     access_token = get_access_token(client_id, client_secret, refresh_token)
     stream_id = ''
     Continue_Main = True
 
+    print('Start scanning DB')
     while Continue_Main and datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
-        last_start_time = find_last_start_db(channel_kind)
+        last_start_time = find_last_start_db(channel_and_time.split('/')[1])
 
         if lower_time_bracket <= last_start_time <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
             streams_data = get_streams_with_certain_statuses(api_key, access_token, ['testing', 'ready'])
-
             for stream_data in streams_data:
                 if streams_data[stream_data]['title'].find(lower_time_bracket.strftime("%m-%d")) != -1 and \
-                        streams_data[stream_data]['title'].find((lower_time_bracket +
-                                                                 datetime.timedelta(minutes=1)).strftime("%H:%M")) != -1:
+                        streams_data[stream_data]['title'].find(channel_and_time.split('/')[0]) != -1:
                     stream_id = streams_data[stream_data]['id']
+                    print("DB insertion detected! Founded stream: https://www.youtube.com/watch?v={}".format(stream_id))
+                    break
 
             start_status = stream_start(stream_id, api_key, access_token)
             Continue_Main = False
 
             if start_status == '<Response [200]>':
                 Continue_Trying_To_Finish = True
-
+                print("Start scanning DB (for stream's finishing).")
                 while Continue_Trying_To_Finish and \
                         datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=57, seconds=1):
-                    last_finish_time = find_last_start_db(channel_kind)
+                    last_finish_time = find_last_start_db(channel_and_time.split('/')[1])
 
                     if last_start_time < last_finish_time:
                         stream_stop(stream_id, api_key, access_token)
                         Continue_Trying_To_Finish = False
                     else:
                         sleep(3)
+                        print('Still scanning...')
         else:
             sleep(3)
+            print('Still scanning...')
+    else:
+        print('Waiting for the next stream...')
 
 
 if __name__ == "__main__":
@@ -187,40 +185,9 @@ if __name__ == "__main__":
 
         for arr_timing in arr_timings:
             if time_after_minute in arr_timing.split('/')[0]:
-                client_id = '845737751068-3bh3fjlb4pjiuce318ka4jmtgb7oo95e.apps.googleusercontent.com'
-                client_secret = 'lUDNJ5mdFm4BExC-p3dDqr96'
-                api_key = 'AIzaSyCzzBreJ9oTGsdsHqWQIOxFF6kIMMyPsVI'
-                refresh_token = '1/e7Mli3kC1J6GjdeKR1ieycI5bW16b11X4ciOIRXi00A'
-
-                main(client_id, client_secret, api_key, refresh_token, arr_timing.split('/')[1], time_now)
+                main(passwords_file.client_id, passwords_file.client_secret, passwords_file.api_key,
+                     passwords_file.refresh_token, arr_timing, time_now)
         else:
             sleep(1)
+            print(datetime.datetime.now())
 
-'''
-
-            for arr_timing in arr_timings1:
-            if time_after_minute in arr_timing.split('/')[0]:
-                cl_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
-                cl_sec = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
-                api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
-                ref_tn = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
-                main(cl_id, cl_sec, api_key, ref_tn, arr_timing.split('/')[1], time_now)
-        elif
-    #Channel №2 (Orhei, old)
-    client_id = '1001120855788-f4rbg0co31kt2lmalqic5t1ha6mp1k68.apps.googleusercontent.com'
-    client_secret = '2xNqKdU_721IJg2ESb1wyQL6'
-    refresh_token = '1/znQ4t6WBLealXD8FJXvWZF7jk0O6WP7pfMYYomaz6F17phpq70cWKFZnh8vYTiEF'
-    api_key = 'AIzaSyCSt6stGMmadEV9qvI903HOcb6vWJO_nLo'
-    #Channel №1 (Orhei TV)
-    client_id = '11035698848-dgvd84n9r3544vua5tuh45b1co5clueh.apps.googleusercontent.com'
-    client_secret = 'TMcTfu5H2FyNB-7Ot8SPUZTw'
-    api_key = 'AIzaSyBxuUbm2FnW42Ar3U-TXkMbbciCSn607CY'
-    refresh_token = '1/5WP_Vd3GzbZ79pvKLLhWBfc05M_6XEevgIqfFpwnArxY4iY3QiPju8i0Cpiwgfqn'
-    #Channel №3 (Central TV)
-    client_id = '845737751068-3bh3fjlb4pjiuce318ka4jmtgb7oo95e.apps.googleusercontent.com'
-    client_secret = 'lUDNJ5mdFm4BExC-p3dDqr96'
-    api_key = 'AIzaSyCzzBreJ9oTGsdsHqWQIOxFF6kIMMyPsVI'
-    refresh_token = '1/e7Mli3kC1J6GjdeKR1ieycI5bW16b11X4ciOIRXi00A'
-    
-
-        '''
