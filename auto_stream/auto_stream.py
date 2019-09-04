@@ -57,64 +57,38 @@ def get_streams_with_certain_statuses(api_key, access_token, statuses):
     return streams_data
 
 
-def stream_start(stream_id, api_key, access_token):
+def stream_change_status(stream_id, api_key, access_token, status):
     headers = {
         'Authorization': 'Bearer ' + access_token,
         'Accept': 'application/json',
     }
 
     params = (
-        ('broadcastStatus', 'live'),
+        ('broadcastStatus', status),
         ('id', stream_id),
         ('part', 'snippet,status'),
         ('key', api_key),
     )
-
-    params2 = (
-        ('broadcastStatus', 'testing'),
-        ('id', stream_id),
-        ('part', 'snippet,status'),
-        ('key', api_key),
-    )
+    sleep(20)
 
     response = requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
                              params=params)
-
-    if str(response) == '<Response [200]>':
-        print('Stream started! id = {}'.format(stream_id))
-    else:
-        print(requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
-                            params=params2), 'Changing ID {} to "Testing"'.format(stream_id))
-        sleep(18)
-        response = requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
-                                 params=params)
+    if status == 'complete':
         if str(response) == '<Response [200]>':
-            print('Stream started! id = {}'.format(stream_id), '(From "Testing")')
+            print('Stream stopped! id = {}'.format(stream_id))
+        else:
+            print('SOMETHING WENT WRONG! FINISH THE STREAM MANUALLY! ID = {}'.format(stream_id))
+    elif status == 'live':
+        if str(response) == '<Response [200]>':
+            print('Stream started! id = {}'.format(stream_id))
         else:
             print('SOMETHING WENT WRONG! START THE STREAM MANUALLY! ID = {}'.format(stream_id))
-    return str(response)
-
-
-def stream_stop(stream_id, api_key, access_token):
-    headers = {
-        'Authorization': 'Bearer ' + access_token,
-        'Accept': 'application/json',
-    }
-
-    params = (
-        ('broadcastStatus', 'complete'),
-        ('id', stream_id),
-        ('part', 'snippet,status'),
-        ('key', api_key),
-    )
-
-    response = requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
-                             params=params)
-
-    if str(response) == '<Response [200]>':
-        print('Stream stopped! id = {}'.format(stream_id))
     else:
-        print('SOMETHING WENT WRONG! FINISH THE STREAM MANUALLY! ID = {}'.format(stream_id))
+        print('Changing ID {} to "Testing"'.format(stream_id))
+
+
+
+    return str(response)
 
 
 def find_last_start_db(channel_kind):
@@ -142,16 +116,18 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
     while Continue_Main and datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
         last_start_time = find_last_start_db(channel_and_time.split('/')[1])
 
-        if lower_time_bracket <= last_start_time <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
-            streams_data = get_streams_with_certain_statuses(api_key, access_token, ['testing', 'ready'])
-            for stream_data in streams_data:
-                if streams_data[stream_data]['title'].find(lower_time_bracket.strftime("%m-%d")) != -1 and \
-                        streams_data[stream_data]['title'].find(channel_and_time.split('/')[0]) != -1:
-                    stream_id = streams_data[stream_data]['id']
-                    print("DB insertion detected! Founded stream: https://www.youtube.com/watch?v={}".format(stream_id))
-                    break
+        streams_data = get_streams_with_certain_statuses(api_key, access_token, ['testing', 'ready'])
+        for stream_data in streams_data:
+            if streams_data[stream_data]['title'].find(lower_time_bracket.strftime("%m-%d")) != -1 and \
+                    streams_data[stream_data]['title'].find(channel_and_time.split('/')[0]) != -1:
+                stream_id = streams_data[stream_data]['id']
+                break
+        stream_change_status(stream_id, api_key, access_token, 'testing')
 
-            start_status = stream_start(stream_id, api_key, access_token)
+        if lower_time_bracket <= last_start_time <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
+            print("DB insertion detected! Founded stream: https://www.youtube.com/watch?v={}".format(stream_id))
+
+            start_status = stream_change_status(stream_id, api_key, access_token, 'live')
             Continue_Main = False
 
             if start_status == '<Response [200]>':
@@ -162,13 +138,13 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
                     last_finish_time = find_last_start_db(channel_and_time.split('/')[1])
 
                     if last_start_time < last_finish_time:
-                        stream_stop(stream_id, api_key, access_token)
+                        stream_change_status(stream_id, api_key, access_token, 'complete')
                         Continue_Trying_To_Finish = False
                     else:
-                        sleep(3)
+                        sleep(1)
                         print('Still scanning...')
         else:
-            sleep(3)
+            sleep(1)
             print('Still scanning...')
     else:
         print('Waiting for the next stream...')
@@ -181,10 +157,10 @@ if __name__ == "__main__":
 
     while True:
         time_now = datetime.datetime.now()  # .strftime("%H:%M")
-        time_after_minute = (datetime.datetime.now() + datetime.timedelta(minutes=1)).strftime("%H:%M")
+        time_after_two_minutes = (datetime.datetime.now() + datetime.timedelta(minutes=2)).strftime("%H:%M")
 
         for arr_timing in arr_timings:
-            if time_after_minute in arr_timing.split('/')[0]:
+            if time_after_two_minutes in arr_timing.split('/')[0]:
                 main(passwords_file.client_id, passwords_file.client_secret, passwords_file.api_key,
                      passwords_file.refresh_token, arr_timing, time_now)
         else:
