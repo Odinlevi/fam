@@ -69,7 +69,6 @@ def stream_change_status(stream_id, api_key, access_token, status):
         ('part', 'snippet,status'),
         ('key', api_key),
     )
-    sleep(20)
 
     response = requests.post('https://www.googleapis.com/youtube/v3/liveBroadcasts/transition', headers=headers,
                              params=params)
@@ -85,9 +84,6 @@ def stream_change_status(stream_id, api_key, access_token, status):
             print('SOMETHING WENT WRONG! START THE STREAM MANUALLY! ID = {}'.format(stream_id))
     else:
         print('Changing ID {} to "Testing"'.format(stream_id))
-
-
-
     return str(response)
 
 
@@ -112,19 +108,18 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
     stream_id = ''
     Continue_Main = True
 
+    streams_data = get_streams_with_certain_statuses(api_key, access_token, ['testing', 'ready'])
+    for stream_data in streams_data:
+        if streams_data[stream_data]['title'].find(lower_time_bracket.strftime("%m-%d")) != -1 and \
+                streams_data[stream_data]['title'].find(channel_and_time.split('/')[0]) != -1:
+            stream_id = streams_data[stream_data]['id']
+            break
+    stream_change_status(stream_id, api_key, access_token, 'testing')
+
     print('Start scanning DB')
-    while Continue_Main and datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
+    while Continue_Main and datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=4, seconds=1):
         last_start_time = find_last_start_db(channel_and_time.split('/')[1])
-
-        streams_data = get_streams_with_certain_statuses(api_key, access_token, ['testing', 'ready'])
-        for stream_data in streams_data:
-            if streams_data[stream_data]['title'].find(lower_time_bracket.strftime("%m-%d")) != -1 and \
-                    streams_data[stream_data]['title'].find(channel_and_time.split('/')[0]) != -1:
-                stream_id = streams_data[stream_data]['id']
-                break
-        stream_change_status(stream_id, api_key, access_token, 'testing')
-
-        if lower_time_bracket <= last_start_time <= lower_time_bracket + datetime.timedelta(minutes=2, seconds=1):
+        if lower_time_bracket <= last_start_time <= lower_time_bracket + datetime.timedelta(minutes=4, seconds=1):
             print("DB insertion detected! Founded stream: https://www.youtube.com/watch?v={}".format(stream_id))
 
             start_status = stream_change_status(stream_id, api_key, access_token, 'live')
@@ -138,6 +133,8 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
                     last_finish_time = find_last_start_db(channel_and_time.split('/')[1])
 
                     if last_start_time < last_finish_time:
+                        print('Stream will be finished in 20 seconds')
+                        sleep(20)
                         stream_change_status(stream_id, api_key, access_token, 'complete')
                         Continue_Trying_To_Finish = False
                     else:
@@ -151,7 +148,7 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
 
 
 if __name__ == "__main__":
-    arr_timings = ['13:00/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU']
+    arr_timings = ['20:56/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU']
     #arr_timings1 = ['13:00/NEWS ORHEI TV MD', '15:00/NEWS ORHEI TV RU', '19:00/NEWS ORHEI TV MD',
     #               '21:00/NEWS ORHEI TV RU']
 
@@ -164,6 +161,6 @@ if __name__ == "__main__":
                 main(passwords_file.client_id, passwords_file.client_secret, passwords_file.api_key,
                      passwords_file.refresh_token, arr_timing, time_now)
         else:
-            sleep(1)
+            sleep(3)
             print(datetime.datetime.now())
 
