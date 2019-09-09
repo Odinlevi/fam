@@ -40,6 +40,7 @@ def get_streams_with_certain_statuses(api_key, access_token, statuses):
     params = (
         ('part', 'snippet,contentDetails,status'),
         ('broadcastType', 'all'),
+        ('maxResults', '50'),
         ('mine', 'true'),
         ('key', api_key),
     )
@@ -148,7 +149,7 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
 
 
 if __name__ == "__main__":
-    arr_timings = ['20:56/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU']
+    arr_timings = ['13:00/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU', '19:00ro', '20:00ru']
     #arr_timings1 = ['13:00/NEWS ORHEI TV MD', '15:00/NEWS ORHEI TV RU', '19:00/NEWS ORHEI TV MD',
     #               '21:00/NEWS ORHEI TV RU']
 
