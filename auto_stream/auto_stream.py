@@ -132,10 +132,16 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
                 while Continue_Trying_To_Finish and \
                         datetime.datetime.now() <= lower_time_bracket + datetime.timedelta(minutes=57, seconds=1):
                     last_finish_time = find_last_start_db(channel_and_time.split('/')[1])
-
+                    if len(channel_and_time.split('/')) == 3:
+                        last_finish_time_meteo = find_last_start_db(channel_and_time.split('/')[2])
+                    else:
+                        last_finish_time_meteo = False
                     if last_start_time < last_finish_time:
                         print('Stream will be finished in 20 seconds')
                         sleep(20)
+                        stream_change_status(stream_id, api_key, access_token, 'complete')
+                        Continue_Trying_To_Finish = False
+                    elif last_finish_time_meteo and last_start_time < last_finish_time_meteo:
                         stream_change_status(stream_id, api_key, access_token, 'complete')
                         Continue_Trying_To_Finish = False
                     else:
@@ -149,14 +155,15 @@ def main(client_id, client_secret, api_key, refresh_token, channel_and_time, low
 
 
 if __name__ == "__main__":
-    arr_timings = ['13:00/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU', '19:00ro', '20:00ru']
     #arr_timings1 = ['13:00/NEWS ORHEI TV MD', '15:00/NEWS ORHEI TV RU', '19:00/NEWS ORHEI TV MD',
     #               '21:00/NEWS ORHEI TV RU']
 
     while True:
         time_now = datetime.datetime.now()  # .strftime("%H:%M")
         time_after_two_minutes = (datetime.datetime.now() + datetime.timedelta(minutes=2)).strftime("%H:%M")
-
+        arr_timings = ['13:00/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU',
+                       '19:00/NEWS CENTRAL TV MD/{} METEO RO'.format(datetime.datetime.now().strftime("%d %m %y")),
+                       '20:00/NEWS CENTRAL TV RU/{} METEO RU'.format(datetime.datetime.now().strftime("%d %m %y"))]
         for arr_timing in arr_timings:
             if time_after_two_minutes in arr_timing.split('/')[0]:
                 main(passwords_file.client_id, passwords_file.client_secret, passwords_file.api_key,
