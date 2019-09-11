@@ -96,7 +96,7 @@ def find_last_start_db(channel_kind):
     with pymssql.connect(ip, login, password, bd) as conn:
         with conn.cursor(as_dict=True) as cursor:
             cursor.execute("SELECT EventTime FROM dbo.AzSrvLogUsersInfo \
-             where EventName LIKE '"+channel_kind+"' ORDER BY 'EventTime'")
+             where EventName LIKE '%"+channel_kind+"%' ORDER BY 'EventTime'")
             for row in cursor:
                 last_event_time = row['EventTime']
             return last_event_time
@@ -162,8 +162,8 @@ if __name__ == "__main__":
         time_now = datetime.datetime.now()  # .strftime("%H:%M")
         time_after_two_minutes = (datetime.datetime.now() + datetime.timedelta(minutes=2)).strftime("%H:%M")
         arr_timings = ['13:00/NEWS CENTRAL TV MD', '15:00/NEWS CENTRAL TV RU',
-                       '19:00/NEWS CENTRAL TV MD/{} METEO RO'.format(datetime.datetime.now().strftime("%d %m %y")),
-                       '20:00/NEWS CENTRAL TV RU/{} METEO RU'.format(datetime.datetime.now().strftime("%d %m %y"))]
+                       '19:00/NEWS CENTRAL TV MD/METEO RO',
+                       '20:00/NEWS CENTRAL TV RU/METEO RU'.]
         for arr_timing in arr_timings:
             if time_after_two_minutes in arr_timing.split('/')[0]:
                 main(passwords_file.client_id, passwords_file.client_secret, passwords_file.api_key,
