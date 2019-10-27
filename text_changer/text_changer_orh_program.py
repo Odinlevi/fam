@@ -1,4 +1,4 @@
-with open('orh_in.txt', 'r', encoding='utf-8') as inp_file:
+with open('CTV 18 00 30 iuni.txt', 'r', encoding='utf-8') as inp_file:
     inp_text = inp_file.read()
 
 inp_strings = inp_text.split('\n')

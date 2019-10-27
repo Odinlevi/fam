@@ -64,18 +64,28 @@ class Ui_Form(object):
         checker1 = 0
         checker2 = 0
         new_text = ''
-        
+        dlit_continue = False
         for string in inp_strings:
 
             string = string.replace(inp_strings[0].replace('﻿', ''), '')
             string = string.replace('OFF', '')
             string = string.replace('SINCRON', '')
             string = string.replace('SINCR+', '')
-            
+            string = string.replace('SINCR', '')
+            string = string.replace('OFF+SINCRON', '')
+            string = string.replace('AMBIANȚA + OFF', '')
+
             if string.upper().find('GENERIC OUT') != -1:
                 break
-            if string.find('ZASTAVKA CTV NOVOSTI') != -1 or string.find('Длительность планируемая:') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Дата планируемого эфира:') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
+            if string.find('ZASTAVKA CTV NOVOSTI') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Дата планируемого эфира:') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
                 continue
+            if string.find('Длительность планируемая:') != -1:
+                dlit_continue = True
+                continue
+            if dlit_continue:
+                dlit_continue = False
+                if string.find(":") != -1:
+                    continue
             stop = 0
             for i, symb in enumerate(string):
                 if i + 3 <= len(string):
