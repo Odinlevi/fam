@@ -77,14 +77,16 @@ class Ui_Form(object):
 
             if string.upper().find('GENERIC OUT') != -1:
                 break
-            if string.find('ZASTAVKA CTV NOVOSTI') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Дата планируемого эфира:') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
+            if string.find('Длительность планируемая:') != -1 or string.find('ZASTAVKA CTV NOVOSTI') != -1 or string.find('Длительность фактическая:') != -1 or string.find('00:00:00:00') != -1 or string.find('Автор: ') != -1 or string.find('Bumper BETA') != -1:
                 continue
-            if string.find('Длительность планируемая:') != -1:
+            if string.find('Дата планируемого эфира:') != -1:
                 dlit_continue = True
+                print("got here")
                 continue
-            if dlit_continue:
+            if dlit_continue == True:
                 dlit_continue = False
-                if string.find(":") != -1:
+                if string.find('00:0') != -1:
+                    print(string)
                     continue
             stop = 0
             for i, symb in enumerate(string):
